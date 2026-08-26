@@ -1,11 +1,8 @@
 import User from "../models/user.model.js";
 import { AppError } from "../utils/AppError.js";
+import { publicUser } from "../utils/publicUser.js";
 
-const publicUser = (user) => {
-  const { password, verificationToken, resetPasswordToken, ...rest } =
-    user._doc || user;
-  return rest;
-};
+
 
 // -------------------------------------------------- Create User ------------------------------------------
 export const createUser = async (userData) => {
