@@ -4,6 +4,10 @@ import bcryptjs from "bcryptjs";
 import crypto from "crypto";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { publicUser } from "../utils/publicUser.js";
+import {
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+} from "../nodemailer/emails.js";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -47,7 +51,7 @@ export const resendCodeService = async (email) => {
 
   await user.save();
 
-  // await sendVerificationEmail(user.email, verificationToken);
+  await sendVerificationEmail(user.email, verificationToken);
 };
 
 // --------------------------------------------Login--------------------------------------------------
@@ -94,10 +98,10 @@ export const forgotPasswordService = async (data) => {
   await user.save();
 
   const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
-  // await sendPasswordResetEmail(
-  //   user.email,
-  //   `${clientUrl}/reset-password/${resetToken}`,
-  // );
+  await sendPasswordResetEmail(
+    user.email,
+    `${clientUrl}/reset-password/${resetToken}`,
+  );
 };
 
 // --------------------------------------------Reset password--------------------------------------------------
@@ -115,6 +119,4 @@ export const resetPasswordService = async ({ token, password }) => {
   user.resetPasswordToken = undefined;
   user.resetPasswordExpiresAt = undefined;
   await user.save();
-
-  // await sendResetSuccessEmail(user.email);
 };
