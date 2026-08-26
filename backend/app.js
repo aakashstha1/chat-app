@@ -5,7 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "./configs/swager-config.js";
+import { swaggerSpec } from "./configs/swager.config.js";
 import authRoutes from "./routes/auth.route.js";
 
 // import userRoutes from "./routes/user.route.js";
