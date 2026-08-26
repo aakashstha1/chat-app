@@ -4,8 +4,10 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import { errorHandler } from "./middlewares/errorHandler.js";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./configs/swager-config.js";
+import authRoutes from "./routes/auth.route.js";
 
-// import authRoutes from "./routes/auth.route.js";
 // import userRoutes from "./routes/user.route.js";
 // import messageRoutes from "./routes/message.route.js";
 
@@ -32,7 +34,10 @@ app.get("/", (req, res) => {
   res.send("Chat API is running");
 });
 
-// app.use("/api/auth", authRoutes);
+// swagger documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use("/api/auth", authRoutes);
 // app.use("/api/users", userRoutes);
 // app.use("/api/messages", messageRoutes);
 
