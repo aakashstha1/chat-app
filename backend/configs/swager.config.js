@@ -13,6 +13,15 @@ const options = {
         url: "http://localhost:5000",
       },
     ],
+    components: {
+      securitySchemes: {
+        cookieAuth: {
+          type: "apiKey",
+          in: "cookie",
+          name: "chat_token",
+        },
+      },
+    },
   },
 
   // Where Swagger will look for API documentation
