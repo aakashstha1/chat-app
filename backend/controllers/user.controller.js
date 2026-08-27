@@ -12,6 +12,7 @@ import {
   updateProfileService,
 } from "../services/user.service.js";
 import { ProfileValidator } from "../validators/user.validator.js";
+import { AppError } from "../utils/AppError.js";
 
 // ---------------------------------------------- Get / Update Profile --------------------------------
 export const getProfile = async (req, res, next) => {
