@@ -4,6 +4,7 @@ import { verifyToken } from "../middlewares/verifyToken.js";
 import {
   checkAuth,
   forgotPassword,
+  googleAuth,
   login,
   logout,
   register,
@@ -157,6 +158,49 @@ router.post("/verify-email", verifyEmail);
  *         description: User not found
  */
 router.post("/resend-code", resendCode);
+
+/**
+ * @swagger
+ * /api/auth/google:
+ *   post:
+ *     summary: Login or register with Google
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - credential
+ *             properties:
+ *               credential:
+ *                 type: string
+ *                 description: Google ID token returned by Google Sign-In
+ *                 example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+ *     responses:
+ *       200:
+ *         description: Successfully authenticated with Google
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Logged in with Google
+ *                 user:
+ *                   type: object
+ *                   description: Authenticated user information
+ *       400:
+ *         description: Missing or invalid Google credential
+ *       500:
+ *         description: Google OAuth is not configured on the server
+ */
+router.post("/google", googleAuth);
 
 /**
  * @swagger
