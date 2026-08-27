@@ -6,9 +6,9 @@ import { fileURLToPath } from "url";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./configs/swager.config.js";
-import authRoutes from "./routes/auth.route.js";
 
-// import userRoutes from "./routes/user.route.js";
+import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
 // import messageRoutes from "./routes/message.route.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/auth", authRoutes);
-// app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes);
 // app.use("/api/messages", messageRoutes);
 
 // centralized error handler (e.g. multer file-size errors)
