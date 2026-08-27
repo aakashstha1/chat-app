@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import FriendRequest from "../models/friendRequest.model.js";
-import { AppError } from "../utils/AppError.js";
 import { publicUser } from "../utils/publicUser.js";
+import { AppError } from "../utils/AppError.js";
 
 const userCard = (u) => ({
   _id: u._id,
