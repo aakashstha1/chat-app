@@ -1,5 +1,6 @@
 import {
   forgotPasswordService,
+  googleAuthService,
   loginService,
   resendCodeService,
   resetPasswordService,
@@ -79,7 +80,7 @@ export const login = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Logged in successfully",
-      user
+      user,
     });
   } catch (error) {
     next(error);
@@ -139,5 +140,22 @@ export const resetPassword = async (req, res, next) => {
   } catch (error) {
     console.log("Error in resetPassword ", error);
     res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+// --------------------------------------------Google OAuth--------------------------------------------------
+export const googleAuth = async (req, res, next) => {
+  try {
+    const user = await googleAuthService(req.body);
+
+    generateTokenAndSetCookie(res, user._id);
+
+    res.status(200).json({
+      success: true,
+      message: "Logged in with Google",
+      user,
+    });
+  } catch (error) {
+    next(error);
   }
 };

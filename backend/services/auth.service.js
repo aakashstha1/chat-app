@@ -2,14 +2,18 @@ import { AppError } from "../utils/AppError.js";
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import crypto from "crypto";
-import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { publicUser } from "../utils/publicUser.js";
 import {
   sendPasswordResetEmail,
   sendVerificationEmail,
 } from "../nodemailer/emails.js";
+import { OAuth2Client } from "google-auth-library";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const googleClient = process.env.GOOGLE_CLIENT_ID
+  ? new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+  : null;
 
 // --------------------------------------------Verify Email--------------------------------------------------
 export const verifyEmailService = async (data) => {
@@ -119,4 +123,60 @@ export const resetPasswordService = async ({ token, password }) => {
   user.resetPasswordToken = undefined;
   user.resetPasswordExpiresAt = undefined;
   await user.save();
+};
+
+// --------------------------------------------Google OAuth--------------------------------------------------
+export const googleAuthService = async (req, res) => {
+  const { credential } = req.body;
+  if (!credential) throw new AppError("Missing credential", 400);
+
+  if (!googleClient)
+    throw new AppError("Google OAuth is not configured on the server", 500);
+
+  const ticket = await googleClient.verifyIdToken({
+    idToken: credential,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+  const { sub: googleId, email, name, picture, email_verified } = payload;
+
+  if (!email_verified) throw new AppError("Email is not verified", 400);
+
+  let user = await User.findOne({
+    $or: [{ googleId }, { email: email.toLowerCase() }],
+  });
+
+  if (!user) {
+    // generate a unique username from the email prefix
+    let base =
+      email
+        .split("@")[0]
+        .toLowerCase()
+        .replace(/[^a-z0-9_.]/g, "")
+        .slice(0, 20) || "user";
+    let candidate = base;
+    let i = 0;
+    while (await User.findOne({ username: candidate })) {
+      i += 1;
+      candidate = `${base}${i}`;
+    }
+
+    user = new User({
+      username: candidate,
+      email: email.toLowerCase(),
+      name: name || candidate,
+      avatar: picture || "",
+      provider: "google",
+      googleId,
+      isVerified: true,
+    });
+    await user.save();
+  } else if (!user.googleId) {
+    user.googleId = googleId;
+    user.isVerified = true;
+    if (!user.avatar && picture) user.avatar = picture;
+    await user.save();
+  }
+
+  return publicUser(user);
 };
