@@ -12,6 +12,7 @@ import {
   emailValidator,
   loginSchema,
   registerSchema,
+  verifyEmailValidator,
 } from "../validators/auth.validator.js";
 
 // ------------------------------------------------ Register ---------------------------------------
@@ -100,7 +101,7 @@ export const logout = async (req, res, next) => {
 // --------------------------------------------Current user--------------------------------------------------
 export const checkAuth = async (req, res, next) => {
   try {
-    const user = await getMe(req.user._id);
+    const user = await getMe(req.userId);
     res.status(200).json({ success: true, user });
   } catch (error) {
     next(error);

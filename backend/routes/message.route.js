@@ -1,8 +1,8 @@
 import express from "express";
 
 import { getMessages, sendMessage } from "../controllers/message.controller.js";
+import { verifyToken } from "../middlewares/verifyToken.js";
 
-import { verifyToken } from "../middleware/verifyToken.js";
 import upload from "../utils/multer.js";
 
 const router = express.Router();

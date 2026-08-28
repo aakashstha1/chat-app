@@ -2,6 +2,8 @@ import User from "../models/user.model.js";
 import FriendRequest from "../models/friendRequest.model.js";
 import { publicUser } from "../utils/publicUser.js";
 import { AppError } from "../utils/AppError.js";
+import bcryptjs from "bcryptjs";
+import { sendVerificationEmail } from "../nodemailer/emails.js";
 
 const userCard = (u) => ({
   _id: u._id,
@@ -35,10 +37,14 @@ export const createUser = async (userData) => {
     password: hashedPassword,
     name,
     provider: "local",
+    // Never trust the request body for this - always force it here.
+    // The public registration endpoint can only ever create normal
+    // user accounts.
+    accountType: "user",
     verificationToken,
     verificationTokenExpiresAt: Date.now() + 15 * 60 * 1000, // 15 minutes
   });
-
+  await sendVerificationEmail(user.email, verificationToken);
   await user.save();
   return publicUser(user);
 };

@@ -18,6 +18,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
       ),
     });
   } catch (error) {
+    console.log(error);
     throw new AppError("Failed to send verification email", 500);
   }
 };

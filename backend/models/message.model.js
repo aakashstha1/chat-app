@@ -12,11 +12,16 @@ const attachmentSchema = new mongoose.Schema(
     },
     size: { type: Number, default: 0 },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const messageSchema = new mongoose.Schema(
   {
+    conversationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: true,
+    },
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -31,9 +36,14 @@ const messageSchema = new mongoose.Schema(
     attachments: [attachmentSchema],
     readAt: { type: Date, default: null },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 messageSchema.index({ sender: 1, receiver: 1, createdAt: -1 });
+
+// Primary access pattern going forward: fetch a conversation's
+// messages in chronological/reverse-chronological order. Used by both
+// normal message pagination and AI context retrieval.
+messageSchema.index({ conversationId: 1, createdAt: -1 });
 
 export default mongoose.model("Message", messageSchema);

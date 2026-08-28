@@ -41,17 +41,31 @@ export const verifyEmailService = async (data) => {
 export const resendCodeService = async (email) => {
   const user = await User.findOne({ email });
 
-  if (!user) throw new AppError("User not found", 404);
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
 
-  if (user.isVerified) throw new AppError("User is already verified", 400);
+  if (user.isVerified) {
+    throw new AppError("User is already verified", 400);
+  }
+
+  if (
+    user.lastVerificationEmailSentAt &&
+    Date.now() - user.lastVerificationEmailSentAt.getTime() < 60 * 1000
+  ) {
+    throw new AppError(
+      "Please wait 1 minute before requesting another code",
+      429,
+    );
+  }
 
   const verificationToken = Math.floor(
     100000 + Math.random() * 900000,
   ).toString();
 
   user.verificationToken = verificationToken;
-
   user.verificationTokenExpiresAt = Date.now() + 15 * 60 * 1000;
+  user.lastVerificationEmailSentAt = new Date();
 
   await user.save();
 
@@ -68,7 +82,13 @@ export const loginService = async (loginData) => {
 
   const user = await User.findOne(query);
 
-  if (!user || !user.password) throw new AppError("Invalid credentials", 400);
+  // The AI system account has no password and must never be reachable
+  // through normal login, regardless of what identifier is supplied.
+  // (It already can't authenticate since it has no password, but this
+  // makes the intent explicit and avoids relying on that side effect.)
+  if (!user || user.accountType === "ai" || !user.password) {
+    throw new AppError("Invalid credentials", 400);
+  }
 
   if (!user.isVerified) {
     return res.status(403).json({
@@ -145,6 +165,10 @@ export const googleAuthService = async (req, res) => {
   let user = await User.findOne({
     $or: [{ googleId }, { email: email.toLowerCase() }],
   });
+
+  if (user?.accountType === "ai") {
+    throw new AppError("Invalid credentials", 400);
+  }
 
   if (!user) {
     // generate a unique username from the email prefix
