@@ -4,11 +4,13 @@ import dotenv from "dotenv";
 dotenv.config({ quiet: true });
 
 export const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.USER,
-    pass: process.env.PASS,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
-export const sender = `"ASN" <no-reply@yourapp.com>`; // Displayed sender name/email
+export const sender = `"ASN" <${process.env.EMAIL_USER}>`;
