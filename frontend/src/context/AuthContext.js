@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import api from "@/lib/api";
 
 const AuthContext = createContext(null);
@@ -64,7 +70,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   const resetPassword = useCallback(async (token, password) => {
-    const { data } = await api.post(`/auth/reset-password/${token}`, { password });
+    const { data } = await api.post(`/auth/reset-password/${token}`, {
+      password,
+    });
     return data.message;
   }, []);
 

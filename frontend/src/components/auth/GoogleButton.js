@@ -21,6 +21,7 @@ export default function GoogleButton() {
     const handleCredential = async (response) => {
       try {
         await googleLogin(response.credential);
+        console.log(response);
         router.replace("/chat");
       } catch (err) {
         notify(err.message, "error");

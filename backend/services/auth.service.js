@@ -146,8 +146,8 @@ export const resetPasswordService = async ({ token, password }) => {
 };
 
 // --------------------------------------------Google OAuth--------------------------------------------------
-export const googleAuthService = async (req, res) => {
-  const { credential } = req.body;
+export const googleAuthService = async (data) => {
+  const { credential } = data;
   if (!credential) throw new AppError("Missing credential", 400);
 
   if (!googleClient)

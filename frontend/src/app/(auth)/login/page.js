@@ -15,7 +15,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  const handleChange = (e) =>
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +30,9 @@ export default function LoginPage() {
       // detect that message and send the user to verify instead of
       // just showing a dead-end error.
       if (/verify/i.test(err.message)) {
-        router.push(`/verify-email?email=${encodeURIComponent(form.identifier)}`);
+        router.push(
+          `/verify-email?email=${encodeURIComponent(form.identifier)}`,
+        );
         return;
       }
       setError(err.message);
@@ -60,7 +63,10 @@ export default function LoginPage() {
           required
         />
         <div className="-mt-1 flex justify-end">
-          <Link href="/forgot-password" className="text-xs text-accent hover:underline">
+          <Link
+            href="/forgot-password"
+            className="text-xs text-accent hover:underline"
+          >
             Forgot password?
           </Link>
         </div>
@@ -79,7 +85,10 @@ export default function LoginPage() {
 
       <p className="mt-6 text-center text-sm text-muted">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-medium text-accent hover:underline">
+        <Link
+          href="/register"
+          className="font-medium text-accent hover:underline"
+        >
           Sign up
         </Link>
       </p>
