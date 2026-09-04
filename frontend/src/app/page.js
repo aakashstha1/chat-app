@@ -3,19 +3,20 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import Spinner from "@/components/ui/Spinner";
 
-export default function Home() {
-  const { user, loading } = useAuth();
+export default function RootPage() {
+  const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (loading) return;
-    router.replace(user ? "/chat" : "/login");
-  }, [user, loading, router]);
+    router.replace(isAuthenticated ? "/chat" : "/login");
+  }, [loading, isAuthenticated, router]);
 
   return (
-    <div className="flex h-screen items-center justify-center text-slate-400">
-      Loading SimpleChat...
+    <div className="flex flex-1 items-center justify-center">
+      <Spinner />
     </div>
   );
 }

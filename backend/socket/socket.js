@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
-import * as cookie from "cookie";
+// import cookie from "cookie";
 
 let io; // Store the Socket.IO server instance
 
@@ -19,21 +19,23 @@ const getUserIdFromSocket = (socket) => {
     const rawCookie = socket.handshake.headers.cookie;
 
     if (rawCookie) {
-      // Convert the cookie string into an object
-      const parsed = cookie.parse(rawCookie);
+      const cookies = Object.fromEntries(
+        rawCookie.split(";").map((cookie) => {
+          const [key, ...value] = cookie.trim().split("=");
+          return [key, decodeURIComponent(value.join("="))];
+        }),
+      );
 
-      // Check if our JWT token exists in the cookie
-      if (parsed.token) {
-        // Verify the JWT and get the data stored inside it
-        const decoded = jwt.verify(parsed.token, process.env.JWT_SECRET_KEY);
+      const token = cookies.chat_token;
 
-        // Return the userId stored inside the JWT
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
         return decoded?.userId;
       }
     }
   } catch (err) {
-    // If cookie/JWT verification fails,
-    // continue and try another method
+    console.error("Socket authentication error:", err.message);
   }
 
   // Fallback:

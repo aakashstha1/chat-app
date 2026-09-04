@@ -4,6 +4,7 @@ import { publicUser } from "../utils/publicUser.js";
 import { AppError } from "../utils/AppError.js";
 import bcryptjs from "bcryptjs";
 import { sendVerificationEmail } from "../nodemailer/emails.js";
+import { getIO, onlineUsers } from "../socket/socket.js";
 
 const userCard = (u) => ({
   _id: u._id,
@@ -102,6 +103,7 @@ export const searchUserService = async (queryData, userId) => {
 
   const filter = {
     _id: { $ne: userId },
+    accountType: "user",
   };
 
   if (query.trim()) {

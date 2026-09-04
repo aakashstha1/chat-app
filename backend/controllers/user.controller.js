@@ -1,6 +1,5 @@
 import User from "../models/user.model.js";
 import FriendRequest from "../models/friendRequest.model.js";
-import { getIO, onlineUsers } from "../socket/socket.js";
 import {
   getFriendRequestService,
   getFriendsService,

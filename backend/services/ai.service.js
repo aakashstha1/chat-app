@@ -1,10 +1,10 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import { getOrCreateConversation } from "./conversation.service.js";
-import { getIO } from "../socket/socket.js";
 import { AppError } from "../utils/AppError.js";
 import { generateResponse } from "../ai/ai.provider.js";
 import { SYSTEM_PROMPT } from "../ai/ai.prompt.js";
+import { getIO } from "../socket/socket.js";
 // How many recent messages (both the user's and the AI's) to send as
 // context on every request. Kept small and bounded on purpose - see
 // the "Long-Term Memory" note below for how this is meant to grow.
